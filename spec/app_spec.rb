@@ -44,7 +44,6 @@ RSpec.describe Reader do
       end
       context "no matching results" do
         it "displays no results and tells the user" do
-          pending
           get "/?q=alkdsjfldsjflksjdflksjflksj"
           expect(last_response).to match("Sorry")
           expect(last_response).to_not match('clinton')

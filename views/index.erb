@@ -9,10 +9,13 @@
   <input type="text" id="search" name='q' value="">
 </form>
 <% unless @stories.nil? %>
+  <% if @stories.length == 0 %>
+    <div>Sorry, apparently that's a really boring topic. No one is talking about it today.</div>
+  <% end %>
   <% @stories.each do |story| %>
     <div class='story'>
-      <% puts story %>
       <h2><%= story[:title] %></h2>
+      <div class='upvotes'><%= story[:upvotes] %> upvotes</div>
     </div>
   <% end %>
 <% end %>

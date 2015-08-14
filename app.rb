@@ -10,7 +10,6 @@ class Reader < Sinatra::Base
   get '/' do
     #query = params.to_a.join(' ').strip
     query = params['q']
-    puts "query=[#{query}]"
     if query.nil? || query.empty?
       erb :index
     else
@@ -34,7 +33,6 @@ class Reader < Sinatra::Base
     queries = query.split(' ')
     stories.select do |story|
       queries.any? do |query|
-        puts story
         story[:title].match(query) ? true : false
       end
     end
