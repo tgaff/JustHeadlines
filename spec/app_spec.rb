@@ -29,16 +29,15 @@ RSpec.describe Reader do
         allow(app).to receive(:get_stories).and_return(stories)
       end
       it 'returns 200' do
-        get "/?dogfood"
+        get "/?q=dogfood"
         expect(last_response.status).to eq 200
       end
       it "returns the matching stories" do
-        get "/?clinton"
+        get "/?q=clinton"
         expect(last_response).to match("clinton does something")
       end
       it "doesn't return unrelated stories" do
-        pending
-        get "/?clinton"
+        get "/?q=clinton"
         expect(last_response).to match("clinton")
         expect(last_response).to_not match(/astronomers/)
         expect(last_response).to_not match(/celebrity/)
@@ -46,10 +45,23 @@ RSpec.describe Reader do
       context "no matching results" do
         it "displays no results and tells the user" do
           pending
-          get "/?alkdsjfldsjflksjdflksjflksj"
+          get "/?q=alkdsjfldsjflksjdflksjflksj"
           expect(last_response).to match("Sorry")
           expect(last_response).to_not match('clinton')
         end
+      end
+    end
+    describe '#find_matching_stories' do
+      subject(:reader) { Reader.new! }
+      let(:result) { reader.find_matching_stories('clinton', stories) }
+
+      it 'returns an array of hashes' do
+        expect(result).to be_a Array
+        expect(result.first).to be_a Hash
+        expect(result.last).to be_a Hash
+      end
+      it 'only returns matching results' do
+        expect(result.length).to eq 1
       end
     end
   end

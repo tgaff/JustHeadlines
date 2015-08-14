@@ -5,12 +5,13 @@
 </head>
 <body>
 <h1>What would you like to read about today?</h1>
-<form action="/" method="POST">
-  <input type="text" id="search" value="">
+<form action="/" method="GET">
+  <input type="text" id="search" name='q' value="">
 </form>
 <% unless @stories.nil? %>
   <% @stories.each do |story| %>
     <div class='story'>
+      <% puts story %>
       <h2><%= story[:title] %></h2>
     </div>
   <% end %>
