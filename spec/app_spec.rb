@@ -3,11 +3,7 @@ require './config/environment'
 
 RSpec.describe Reader do
 
-  def app
-    #Reader
-    Reader.new!
-  end
-
+  let(:app) { Reader.new! } #deal with sinatra's weird new override
   let(:stories) {
     [
       { title: 'newsey news', category: 'news', upvotes: 2 },

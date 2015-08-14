@@ -18,24 +18,17 @@ class Reader < Sinatra::Base
     if query.nil? || query.empty?
       erb :index
     else
-      stories = get_stories
-      # NOTE we resave this var once it's sorted which should make future sorts fast
-      @stories = sort_by_upvotes(find_matching_stories(query, stories))
+      @stories = sort_by_upvotes(find_matching_stories(query, get_stories))
       erb :index
     end
   end
 
-  def initialize
-    @stories = get_stories
-    super
-  end
+  # retrieves all stories if needed and saves it as @all_stories
   def get_stories
-    if @stories.nil? || @stories.empty?
-      @stories = Mashable.get_mashable_stories
-    end
-    @stories
+    @stories = Mashable.get_mashable_stories
   end
 
+  # scope an array of stories to those matching the query
   def find_matching_stories(query, stories=@stories)
     queries = query.split(' ')
     stories.select do |story|
