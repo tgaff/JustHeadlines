@@ -11,9 +11,10 @@ RSpec.describe Reader do
   let(:stories) {
     [
       { title: 'newsey news', category: 'news', upvotes: 2 },
+      { title: 'popular news', category: 'news', upvotes: 1000 },
+      { title: "Famous celebrity caught doing something really dumb again", category: 'entertainment', upvotes: 0 },
       { title: 'clinton does something undemocratic again', category: 'politics', upvotes: 18 },
-      { title: "astronomers discover yet another planet that's way too big and way too far away", category: 'science', upvotes: 12 },
-      { title: "Famous celebrity caught doing something really dumb again", category: 'entertainment', upvotes: 0 }
+      { title: "astronomers discover yet another planet that's too big and far away", category: 'science', upvotes: 12 },
     ]
   }
 
@@ -28,6 +29,7 @@ RSpec.describe Reader do
       before do
         allow(app).to receive(:get_stories).and_return(stories)
       end
+
       it 'returns 200' do
         get "/?q=dogfood"
         expect(last_response.status).to eq 200
@@ -42,6 +44,13 @@ RSpec.describe Reader do
         expect(last_response).to_not match(/astronomers/)
         expect(last_response).to_not match(/celebrity/)
       end
+      it "sorts stories based on votes" do
+        get "/?q=do"
+        expect(last_response).to match(/clinton.*celebrity/m)
+        get "/?q=news"
+        expect(last_response).to match(/popular.*newsey/m)
+      end
+
       context "no matching results" do
         it "displays no results and tells the user" do
           get "/?q=alkdsjfldsjflksjdflksjflksj"
@@ -50,18 +59,19 @@ RSpec.describe Reader do
         end
       end
     end
-    describe '#find_matching_stories' do
-      subject(:reader) { Reader.new! }
-      let(:result) { reader.find_matching_stories('clinton', stories) }
+  end
 
-      it 'returns an array of hashes' do
-        expect(result).to be_a Array
-        expect(result.first).to be_a Hash
-        expect(result.last).to be_a Hash
-      end
-      it 'only returns matching results' do
-        expect(result.length).to eq 1
-      end
+  describe '#find_matching_stories' do
+    subject(:reader) { Reader.new! }
+    let(:result) { reader.find_matching_stories('clinton', stories) }
+
+    it 'returns an array of hashes' do
+      expect(result).to be_a Array
+      expect(result.first).to be_a Hash
+      expect(result.last).to be_a Hash
+    end
+    it 'only returns matching results' do
+      expect(result.length).to eq 1
     end
   end
 end

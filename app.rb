@@ -14,7 +14,7 @@ class Reader < Sinatra::Base
       erb :index
     else
       stories = get_stories
-      @stories = find_matching_stories(query, stories)
+      @stories = sort_by_upvotes(find_matching_stories(query, stories))
       erb :index
     end
   end
@@ -22,9 +22,10 @@ class Reader < Sinatra::Base
   def get_stories
     @stories ||= [
       { title: 'newsey news', category: 'news', upvotes: 2 },
+      { title: 'popular news', category: 'news', upvotes: 1000 },
+      { title: "Famous celebrity caught doing something really dumb again", category: 'entertainment', upvotes: 0 },
       { title: 'clinton does something undemocratic again', category: 'politics', upvotes: 18 },
-      { title: "astronomers discover yet another planet that's way too big and way too far away", category: 'science', upvotes: 12 },
-      { title: "Famous celebrity caught doing something really dumb again", category: 'entertainment', upvotes: 0 }
+      { title: "astronomers discover yet another planet that's too big and far away", category: 'science', upvotes: 12 },
     ]
     @stories
   end
@@ -35,6 +36,12 @@ class Reader < Sinatra::Base
       queries.any? do |query|
         story[:title].match(query) ? true : false
       end
+    end
+  end
+
+  def sort_by_upvotes(stories)
+    stories.sort do |a,b|
+      -1* (a[:upvotes] <=> b[:upvotes])
     end
   end
 end
