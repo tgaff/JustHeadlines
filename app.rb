@@ -1,9 +1,15 @@
 require 'sinatra'
 require 'haml'
 require 'pry-byebug' unless ENV['RACK_ENV'].match 'production'
-
+require './lib/mashable'
 
 class Reader < Sinatra::Base
+  RETRIEVE_EVERY = 120 # every 120 seconds we're eligible to hit the api
+
+  # container for MashableAPI
+  class Mashable
+    extend MashableAPI
+  end
 
   set :public_folder, File.dirname(__FILE__) + '/public'
 
@@ -20,14 +26,11 @@ class Reader < Sinatra::Base
   end
 
   def get_stories
-    @stories ||= [
-      { title: 'newsey news', category: 'news', upvotes: 2 },
-      { title: 'popular news', category: 'news', upvotes: 1000 },
-      { title: "Famous celebrity caught doing something really dumb again", category: 'entertainment', upvotes: 0 },
-      { title: 'clinton does something undemocratic again', category: 'politics', upvotes: 18 },
-      { title: "astronomers discover yet another planet that's too big and far away", category: 'science', upvotes: 12 },
-    ]
-    @stories
+    if time_to_reget? || @stories.nil? || @stories.empty?
+      @stories = Mashable.get_mashable_stories
+    else
+      @stories
+    end
   end
 
   def find_matching_stories(query, stories=@stories)
@@ -39,6 +42,10 @@ class Reader < Sinatra::Base
     end
   end
 
+  def time_to_reget?
+    return true if @stories_retrieved_at.nil?
+    @stories_retrieved_at < Time.now - RETRIEVE_EVERY ? true : false
+  end
   def sort_by_upvotes(stories)
     stories.sort do |a,b|
       -1* (a[:upvotes] <=> b[:upvotes])

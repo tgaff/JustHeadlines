@@ -27,7 +27,7 @@ RSpec.describe Reader do
 
     context "with a query" do
       before do
-        allow(app).to receive(:get_stories).and_return(stories)
+        allow(Reader::Mashable).to receive(:get_mashable_stories).and_return(stories)
       end
 
       it 'returns 200' do

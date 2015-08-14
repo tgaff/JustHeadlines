@@ -1,5 +1,7 @@
 gem 'sinatra'
 gem 'haml'
+gem 'json'
+gem 'rest-client'
 
 gem 'pry'
 gem 'pry-byebug'
