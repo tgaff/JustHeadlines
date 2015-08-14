@@ -49,7 +49,7 @@ module RedditAPI
   end
 
   def create_story_hash(story)
-    {title: story['data']['title'], category: story['data']['subreddit'], upvotes: story['data']['ups']}
+    {title: story['data']['title'], category: story['data']['subreddit'], upvotes: story['data']['ups'], link: story['data']['url']}
   end
 
 
