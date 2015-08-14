@@ -2,12 +2,16 @@ require 'sinatra'
 require 'haml'
 require 'pry-byebug' unless ENV['RACK_ENV'].match 'production'
 require './lib/mashable'
+require './lib/reddit'
 
 class Reader < Sinatra::Base
 
   # container for MashableAPI
   class Mashable
     extend MashableAPI
+  end
+  class Reddit
+    extend RedditAPI
   end
 
   set :public_folder, File.dirname(__FILE__) + '/public'
@@ -25,7 +29,8 @@ class Reader < Sinatra::Base
 
   # retrieves all stories if needed and saves it as @all_stories
   def get_stories
-    @stories = Mashable.get_mashable_stories
+    @stories = Mashable.get_stories
+    @stories.push(*Reddit.get_stories)
   end
 
   # scope an array of stories to those matching the query

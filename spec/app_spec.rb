@@ -14,7 +14,8 @@ RSpec.describe Reader do
     ]
   }
   before do
-    allow(Reader::Mashable).to receive(:get_mashable_stories).and_return(stories)
+    allow(Reader::Mashable).to receive(:get_stories).and_return(stories)
+    allow(Reader::Reddit).to receive(:get_stories).and_return([])
   end
 
   describe "GET /" do

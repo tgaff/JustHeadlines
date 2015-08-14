@@ -1,3 +1,5 @@
+# borrowed from ray
+
 #1 - Pull the json from the reddit API via http://www.reddit.com/.json
   # - http://mashable.com/stories.json (homework)
   # - http://digg.com/api/news/popular.json (Homework)
@@ -14,13 +16,12 @@
 require 'rest-client'
 require 'pry'
 require 'json'
-require 'csv'
 
 module MashableAPI
   MASHABLE_URI = "http://mashable.com/stories.json"
   # Get request to a URL and parsed into JSON
 
-  def get_mashable_stories
+  def get_stories
     mashable_json_response = connect_to_api(MASHABLE_URI)
 
     new_stories = parse_json(mashable_json_response, "new")
