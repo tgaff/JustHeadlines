@@ -3,11 +3,12 @@ require './config/environment'
 
 RSpec.describe Reader do
 
-  def app
+#  def app
     #Reader
-    Reader.new!
-  end
+   # Reader.new!
+ # end
 
+  let(:app) { Reader.new! }
   let(:stories) {
     [
       { title: 'newsey news', category: 'news', upvotes: 2 },
@@ -17,8 +18,12 @@ RSpec.describe Reader do
       { title: "astronomers discover yet another planet that's too big and far away", category: 'science', upvotes: 12 },
     ]
   }
+  before do
+    allow(Reader::Mashable).to receive(:get_mashable_stories).and_return(stories)
+  end
 
   describe "GET /" do
+
     it 'displays index.erb' do
       get "/"
       expect(last_response.body).to match(/indexificator/)
@@ -26,10 +31,6 @@ RSpec.describe Reader do
     end
 
     context "with a query" do
-      before do
-        allow(Reader::Mashable).to receive(:get_mashable_stories).and_return(stories)
-      end
-
       it 'returns 200' do
         get "/?q=dogfood"
         expect(last_response.status).to eq 200
@@ -61,6 +62,13 @@ RSpec.describe Reader do
     end
   end
 
+  describe '#get_stories' do
+    it 'sets the shared @stories_retrieved_at var' do
+      app.instance_variable_set(:@stories_retrieved_at, Time.now - (3*10*60))
+      get "/?q=kdfj"
+      expect(app.instance_variable_get(:@stories_retrieved_at)).to_not eq nil
+    end
+  end
   describe '#find_matching_stories' do
     subject(:reader) { Reader.new! }
     let(:result) { reader.find_matching_stories('clinton', stories) }
@@ -72,6 +80,24 @@ RSpec.describe Reader do
     end
     it 'only returns matching results' do
       expect(result.length).to eq 1
+    end
+  end
+
+  describe '#time_to_reget?' do
+    let(:app) { Reader.new! }
+
+    it 'returns false when queried right after a get' do
+      expect(app.time_to_reget?).to be_falsey
+
+      expect(app.time_to_reget?).to be_falsey
+    end
+    it 'returns false the first time because its set on init' do
+      expect(app.time_to_reget?).to be_falsey
+    end
+    it 'returns true after the time elapses' do
+      get '/?q=sdf'
+      app.instance_variable_set(:@stories_retrieved_at, Time.now-(20*60))
+      expect(app.time_to_reget?).to be_truthy
     end
   end
 end

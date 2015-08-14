@@ -4,7 +4,7 @@ require 'pry-byebug' unless ENV['RACK_ENV'].match 'production'
 require './lib/mashable'
 
 class Reader < Sinatra::Base
-  RETRIEVE_EVERY = 120 # every 120 seconds we're eligible to hit the api
+  RETRIEVE_EVERY = 40 # every 120 seconds we're eligible to hit the api
 
   # container for MashableAPI
   class Mashable
@@ -25,27 +25,42 @@ class Reader < Sinatra::Base
     end
   end
 
+  def initialize
+    @all_stories ||= sort_by_upvotes(get_stories)
+    @stories_retrieved_at ||= Time.now
+    super
+  end
+
+  # retrieves all stories if needed and saves it as @all_stories
+  # sets @stories_retrieved_at
   def get_stories
-    if time_to_reget? || @stories.nil? || @stories.empty?
-      @stories = Mashable.get_mashable_stories
+    puts "ttr=#{time_to_reget?} @all_stories=[#{@all_stories}]"[0..70]
+    if time_to_reget? || @all_stories.nil? || @all_stories.empty?
+      @stories_retrieved_at = Time.now
+      @all_stories = Mashable.get_mashable_stories
     else
-      @stories
+      @all_stories
     end
   end
 
-  def find_matching_stories(query, stories=@stories)
+  # scope an array of stories to those matching the query
+  def find_matching_stories(query, stories=@all_stories)
     queries = query.split(' ')
     stories.select do |story|
       queries.any? do |query|
+        # Array#select will keep any stories that return true here
         story[:title].match(query) ? true : false
       end
     end
   end
 
+  # determines if its time to re-hit our news sources
   def time_to_reget?
+    puts @stories_retrieved_at
     return true if @stories_retrieved_at.nil?
-    @stories_retrieved_at < Time.now - RETRIEVE_EVERY ? true : false
+    Time.now - @stories_retrieved_at > RETRIEVE_EVERY ? true : false
   end
+
   def sort_by_upvotes(stories)
     stories.sort do |a,b|
       -1* (a[:upvotes] <=> b[:upvotes])
