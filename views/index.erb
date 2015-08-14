@@ -23,7 +23,7 @@
       <% end %>
       <% @stories.each do |story| %>
         <div class='story'>
-          <h2><%= story[:title] %></h2>
+          <h2><a target="_blank" href="<%= story[:link] %>"><%= story[:title] %></a></h2>
           <div class='upvotes'><%= story[:upvotes] %> upvotes</div>
         </div>
       <% end %>

@@ -32,6 +32,7 @@ module MashableAPI
 
 
   def connect_to_api(url)
+    puts "hitting #{url}"
     get_data = RestClient.get(url)
     JSON.parse(get_data)
   end
@@ -61,7 +62,8 @@ module MashableAPI
       story_hash = {
         title: story["title"],
         category: story["channel_label"],
-        upvotes: story["shares"]["total"]
+        upvotes: story["shares"]["total"],
+        link: story["link"]
       }
       # Push new hash into a new array
       story_array.push(story_hash)
