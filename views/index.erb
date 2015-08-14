@@ -2,22 +2,34 @@
 <html>
 <head>
   <title>News indexificator</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
 </head>
 <body>
-<h1>What would you like to read about today?</h1>
-<form action="/" method="GET">
-  <input type="text" id="search" name='q' value="">
-</form>
-<% unless @stories.nil? %>
-  <% if @stories.length == 0 %>
-    <div>Sorry, apparently that's a really boring topic. No one is talking about it today.</div>
-  <% end %>
-  <% @stories.each do |story| %>
-    <div class='story'>
-      <h2><%= story[:title] %></h2>
-      <div class='upvotes'><%= story[:upvotes] %> upvotes</div>
+  <div class="container">
+    <div class="jumbotron">
+
+      <h1>what are you interested in?</h1><br />
+      <form action="/" method="GET" class='form-group form-group-lg'>
+        <label class='sr-only'>search</label>
+        <input class='input-lg form-control' type="text" id="search" name='q' value="">
+      </form>
     </div>
-  <% end %>
-<% end %>
+    <% unless @stories.nil? %>
+      <% if @stories.length == 0 %>
+        <div>Sorry, apparently that's a really boring topic. No one is talking about it today.</div>
+      <% end %>
+      <% @stories.each do |story| %>
+        <div class='story'>
+          <h2><%= story[:title] %></h2>
+          <div class='upvotes'><%= story[:upvotes] %> upvotes</div>
+        </div>
+      <% end %>
+    <% end %>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  </div>
 </body>
 </html>
