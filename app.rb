@@ -30,10 +30,10 @@ class Reader < Sinatra::Base
 
   # scope an array of stories to those matching the query
   def find_matching_stories(query, stories=@stories)
-    queries = query.split(' ')
+    queries = query.downcase.split(' ') # downcase all for case-insensitive match
     stories.select do |story|
       queries.any? do |query|
-        story[:title].match(query) ? true : false
+        story[:title].downcase.match(query) ? true : false
       end
     end
   end

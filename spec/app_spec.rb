@@ -68,6 +68,10 @@ RSpec.describe Reader do
     it 'only returns matching results' do
       expect(result.length).to eq 1
     end
+    it 'is case insensitive' do
+      reader.find_matching_stories('CLiNtON', stories)
+      expect(result.length).to eq 1
+    end
   end
 end
 
