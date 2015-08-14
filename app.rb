@@ -1,6 +1,6 @@
 require 'sinatra'
 require 'haml'
-
+require 'pry-byebug' unless ENV['RACK_ENV'].match 'production'
 
 
 class Reader < Sinatra::Base
@@ -8,11 +8,23 @@ class Reader < Sinatra::Base
   set :public_folder, File.dirname(__FILE__) + '/public'
 
   get '/' do
-    query = params['query']
-    if query.nil?
+    query = params.to_a.join(' ').strip
+    puts "query=[#{query}]"
+    if query.nil? || query.empty?
       erb :index
     else
-      "not implemented"
+      @stories = get_stories
+      erb :index
     end
+  end
+
+  def get_stories
+    @stories ||= [
+      { title: 'newsey news', category: 'news', upvotes: 2 },
+      { title: 'clinton does something undemocratic again', category: 'politics', upvotes: 18 },
+      { title: "astronomers discover yet another planet that's way too big and way too far away", category: 'science', upvotes: 12 },
+      { title: "Famous celebrity caught doing something really dumb again", category: 'entertainment', upvotes: 0 }
+    ]
+    @stories
   end
 end
