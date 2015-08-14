@@ -1,5 +1,14 @@
-# NewsReader
-Display and search headlines from mashable.  This project was created in answer to the question "Why are we learning to use JSON APIs?  What could we do with this?"
+# just headlines
+Displays and allows searches of headlines from mashable.  
+
+See it here: [https://just-headlines.herokuapp.com/](https://just-headlines.herokuapp.com/)
+
+# why?
+This project was created in answer to the questions: 
+
+- What good are these hashes?
+- Why are we learning to use JSON APIs?  
+- What could we do with this?
 
 # LICENSE
 MIT
