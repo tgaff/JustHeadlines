@@ -26,6 +26,7 @@ class Reader < Sinatra::Base
   end
 
   def initialize
+    puts 'init is getting' if @all_stories.nil?
     @all_stories ||= sort_by_upvotes(get_stories)
     @stories_retrieved_at ||= Time.now
     super
@@ -34,15 +35,16 @@ class Reader < Sinatra::Base
   # retrieves all stories if needed and saves it as @all_stories
   # sets @stories_retrieved_at
   def get_stories
-    puts "ttr=#{time_to_reget?} @all_stories=[#{@all_stories}]"[0..70]
+    puts "ttr=#{time_to_reget?} if=#{self.object_id} @all_stories=[#{@all_stories}]"[0..100]
     if time_to_reget? || @all_stories.nil? || @all_stories.empty?
       @stories_retrieved_at = Time.now
       @all_stories = Mashable.get_mashable_stories
-    else
-      @all_stories
+      # Sinatra is changing our instance and breaking how we reset our data
+      # todo: needs further investigation to do this the sinatra way
+      # it seems likely that sinatra is keeping the data we initialized FOREVER
     end
+      @all_stories
   end
-
   # scope an array of stories to those matching the query
   def find_matching_stories(query, stories=@all_stories)
     queries = query.split(' ')
