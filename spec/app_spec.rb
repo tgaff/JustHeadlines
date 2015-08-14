@@ -17,6 +17,9 @@ RSpec.describe Reader do
       { title: "astronomers discover yet another planet that's too big and far away", category: 'science', upvotes: 12 },
     ]
   }
+  before do
+    allow(Reader::Mashable).to receive(:get_mashable_stories).and_return(stories)
+  end
 
   describe "GET /" do
     it 'displays index.erb' do
@@ -26,10 +29,6 @@ RSpec.describe Reader do
     end
 
     context "with a query" do
-      before do
-        allow(Reader::Mashable).to receive(:get_mashable_stories).and_return(stories)
-      end
-
       it 'returns 200' do
         get "/?q=dogfood"
         expect(last_response.status).to eq 200

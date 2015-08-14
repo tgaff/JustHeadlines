@@ -4,7 +4,6 @@ require 'pry-byebug' unless ENV['RACK_ENV'].match 'production'
 require './lib/mashable'
 
 class Reader < Sinatra::Base
-  RETRIEVE_EVERY = 120 # every 120 seconds we're eligible to hit the api
 
   # container for MashableAPI
   class Mashable
@@ -20,17 +19,21 @@ class Reader < Sinatra::Base
       erb :index
     else
       stories = get_stories
+      # NOTE we resave this var once it's sorted which should make future sorts fast
       @stories = sort_by_upvotes(find_matching_stories(query, stories))
       erb :index
     end
   end
 
+  def initialize
+    @stories = get_stories
+    super
+  end
   def get_stories
-    if time_to_reget? || @stories.nil? || @stories.empty?
+    if @stories.nil? || @stories.empty?
       @stories = Mashable.get_mashable_stories
-    else
-      @stories
     end
+    @stories
   end
 
   def find_matching_stories(query, stories=@stories)
@@ -42,10 +45,6 @@ class Reader < Sinatra::Base
     end
   end
 
-  def time_to_reget?
-    return true if @stories_retrieved_at.nil?
-    @stories_retrieved_at < Time.now - RETRIEVE_EVERY ? true : false
-  end
   def sort_by_upvotes(stories)
     stories.sort do |a,b|
       -1* (a[:upvotes] <=> b[:upvotes])
