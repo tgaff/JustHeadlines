@@ -15,7 +15,7 @@ class Reader < Sinatra::Base
   end
 
   set :public_folder, File.dirname(__FILE__) + '/public'
-
+  puts public_folder
   get '/' do
     #query = params.to_a.join(' ').strip
     query = params['q']
