@@ -20,6 +20,7 @@ class Reader < Sinatra::Base
     #query = params.to_a.join(' ').strip
     query = params['q']
     if query.nil? || query.empty?
+      @stories = sort_by_upvotes(get_stories)
       erb :index
     else
       @stories = sort_by_upvotes(find_matching_stories(query, get_stories))

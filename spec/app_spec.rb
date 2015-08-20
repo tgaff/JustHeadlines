@@ -24,6 +24,15 @@ RSpec.describe Reader do
       expect(last_response.body).to match(/indexificator/)
       expect(last_response.status).to eq 200
     end
+    context "without a query" do
+      it 'returns all results' do
+        get "/"
+        expect(last_response).to match('clinton')
+        expect(last_response).to match('newsey')
+        expect(last_response).to match('astronomers')
+        expect(last_response).to match('really dumb')
+      end
+    end
 
     context "with a query" do
       it 'returns 200' do
